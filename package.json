@@ -1,0 +1,25 @@
+{
+  "name": "landsure",
+  "version": "1.0.0",
+  "description": "LandSure — Smart-Contract-Based Multi-Department Land Governance and Fraud Prevention System",
+  "main": "scripts/interact.js",
+  "scripts": {
+    "ganache": "ganache --port 7545 --wallet.totalAccounts 10",
+    "compile": "truffle compile",
+    "migrate": "truffle migrate --network development",
+    "migrate:reset": "truffle migrate --network development --reset",
+    "test": "truffle test",
+    "demo": "node scripts/demo.js",
+    "cli": "node scripts/interact.js",
+    "hash": "node -e \"const c=require('crypto'); const s=process.argv[1]; console.log('0x'+c.createHash('sha256').update(s).digest('hex'));\""
+  },
+  "dependencies": {
+    "web3": "^1.10.0"
+  },
+  "devDependencies": {
+    "ganache": "^7.9.2",
+    "truffle": "^5.11.0"
+  },
+  "author": "LandSure Team — Blockchain for Land Governance",
+  "license": "MIT"
+}

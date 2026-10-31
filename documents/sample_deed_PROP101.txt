@@ -1,0 +1,21 @@
+LandSure — Blockchain-Based Land Governance System
+====================================================
+Smart Contract: Solidity | Local Chain: Ganache | Framework: Truffle | CLI: Node.js + Web3.js
+
+This is a sample property deed for demonstration purposes.
+
+Property ID    : PROP101
+Survey Number  : 245/A
+Location       : Ahmedabad, Gujarat, India
+Area           : 1500 sq.ft
+Owner Name     : Rahul Sharma
+Owner Address  : (assigned Ganache account)
+Registration   : Revenue Department, Government of Gujarat
+Date           : 31 October 2024
+
+This document has been digitally registered on the LandSure blockchain.
+Its SHA-256 hash is stored immutably on the Ganache blockchain.
+Any modification to this file will produce a different hash
+and will be detected by the verifyDocument() smart contract function.
+
+- LandSure System
