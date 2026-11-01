@@ -86,6 +86,19 @@ function hashString(str) {
   return "0x" + crypto.createHash("sha256").update(str).digest("hex");
 }
 
+function resolveAccount(input) {
+  if (!input) return null;
+  const clean = String(input).trim();
+  if (web3.utils.isAddress(clean)) {
+    return clean;
+  }
+  const idx = parseInt(clean, 10);
+  if (!isNaN(idx) && idx >= 0 && idx < accounts.length) {
+    return accounts[idx];
+  }
+  return null;
+}
+
 function printBanner() {
   console.clear();
   console.log("═══════════════════════════════════════════════════");
@@ -184,17 +197,40 @@ async function viewRole() {
 // 3. Register Property
 async function registerProperty() {
   console.log("\n── REGISTER PROPERTY ───────────────────────────────");
-  const propId  = await ask("Property ID (e.g. PROP101): ");
-  const survey  = await ask("Survey Number (e.g. 245/A): ");
-  const loc     = await ask("Location (e.g. Ahmedabad, Gujarat): ");
-  const area    = await ask("Area (e.g. 1500 sq.ft): ");
 
-  console.log("\nOwner account index:");
+  // Ensure current caller is REVENUE
+  const callerRole = await contract.methods.getRoleName(currentAccount).call();
+  if (callerRole !== "REVENUE") {
+    console.log(`⚠️  Warning: Current active account is '${callerRole}'. Only 'REVENUE' can register properties.`);
+    console.log(`   Revenue Department account: ${accounts[1]}`);
+    const autoSwitch = (await ask("Switch to Revenue account [1] now? (y/n): ")).trim().toLowerCase();
+    if (autoSwitch === "y") {
+      currentAccount = accounts[1];
+      console.log(`✅ Switched to Revenue account: ${currentAccount}`);
+    } else {
+      console.log("   Operation cancelled. Switch via Option 20.");
+      return;
+    }
+  }
+
+  const propId  = await ask("Property ID (e.g. PROP105): ");
+  const survey  = await ask("Survey Number (e.g. 345/B): ");
+  const loc     = await ask("Location (e.g. Bharuch, Gujarat): ");
+  const area    = await ask("Area (e.g. 2400 sq.ft): ");
+
+  console.log("\nEligible citizen accounts:");
   for (let i = 0; i < accounts.length; i++) {
     const r = await contract.methods.getRoleName(accounts[i]).call();
     console.log(`  [${i}] ${accounts[i]}  (${r})`);
   }
-  const ownerIdx = parseInt(await ask("Enter owner account index: "));
+  const ownerInput = await ask("\nEnter owner account index (e.g. 6) OR paste 0x address: ");
+  const ownerAddress = resolveAccount(ownerInput);
+
+  if (!ownerAddress) {
+    console.log("❌ Invalid account index or address entered.");
+    return;
+  }
+  console.log(`   Selected Owner: ${ownerAddress}`);
 
   const useFile = (await ask("Hash from file? (y/n): ")).trim().toLowerCase() === "y";
   let docHash;
@@ -204,16 +240,16 @@ async function registerProperty() {
     docHash = hashFile(fp);
     console.log(`   Computed SHA-256: ${docHash}`);
   } else {
-    const label = await ask("Enter document label to hash (e.g. sale_deed_prop101): ");
+    const label = await ask("Enter document label to hash (e.g. sale_deed_prop105): ");
     docHash = hashString(label);
     console.log(`   Computed SHA-256: ${docHash}`);
   }
 
   try {
     const tx = await contract.methods
-      .registerProperty(propId, survey, loc, area, accounts[ownerIdx], docHash)
+      .registerProperty(propId, survey, loc, area, ownerAddress, docHash)
       .send({ from: currentAccount, gas: 500000 });
-    console.log(`\n✅  Property ${propId} registered successfully!`);
+    console.log(`\n✅  Property ${propId} registered successfully on blockchain!`);
     console.log(`   Tx Hash : ${tx.transactionHash}`);
     console.log(`   Block   : ${tx.blockNumber}`);
     console.log(`   Gas Used: ${tx.gasUsed}`);
@@ -346,16 +382,17 @@ async function initiateTransfer() {
   console.log("\n── INITIATE TRANSFER ───────────────────────────────");
   const propId = await ask("Property ID: ");
 
-  console.log("\nBuyer account index:");
-  for (let i = 0; i < accounts.length; i++) {
-    const r = await contract.methods.getRoleName(accounts[i]).call();
-    console.log(`  [${i}] ${accounts[i]}  (${r})`);
+  const buyerInput = await ask("\nEnter buyer account index (e.g. 7) OR paste 0x address: ");
+  const buyerAddress = resolveAccount(buyerInput);
+  if (!buyerAddress) {
+    console.log("❌ Invalid account index or address entered.");
+    return;
   }
-  const buyerIdx = parseInt(await ask("Enter buyer account index: "));
+  console.log(`   Selected Buyer: ${buyerAddress}`);
 
   try {
     const tx = await contract.methods
-      .initiateTransfer(propId, accounts[buyerIdx])
+      .initiateTransfer(propId, buyerAddress)
       .send({ from: currentAccount, gas: 400000 });
     console.log(`\n✅  Transfer initiated!  Tx: ${tx.transactionHash}`);
     console.log(`   Next step: buyer must accept (option 12)`);
