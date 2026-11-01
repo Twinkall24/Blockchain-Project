@@ -59,7 +59,7 @@ ensure_contract_deployed() {
 
 echo ""
 echo "Select an action:"
-echo "  1) Run Automated Demo (Recommended for Professor presentation)"
+echo "  1) Run End-to-End System Simulation"
 echo "  2) Open Interactive CLI"
 echo "  3) Run Full Unit Test Suite (33 Tests)"
 echo "  4) Re-deploy Contracts (Reset state)"
@@ -71,7 +71,7 @@ case $choice in
     1)
         ensure_contract_deployed
         echo ""
-        echo "🚀 Running Automated Professor Demo..."
+        echo "🚀 Running End-to-End Governance Simulation..."
         node scripts/demo.js
         ;;
     2)

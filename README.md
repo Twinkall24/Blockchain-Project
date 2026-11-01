@@ -1,245 +1,216 @@
 # 🏛️ LandSure — Smart-Contract-Based Multi-Department Land Governance System
 
-> **Blockchain for Land Governance** | Solidity · Ganache · Truffle · Node.js · Web3.js
-> Final Practical Examination Project
+> **Blockchain-Based Land Governance and Fraud Prevention Architecture**  
+> Built with Solidity · Ganache · Truffle · Node.js · Web3.js
 
 ---
 
 ## 📌 Project Overview
 
-LandSure is a **CLI-based blockchain application** that simulates a multi-department land governance system. Government departments have different smart-contract-enforced permissions. A property can only be transferred after the contract verifies ownership, buyer acceptance, bank clearance, court restrictions, and registrar approval.
+**LandSure** is a permissioned blockchain solution that digitizes and coordinates multi-departmental land administration. Unlike single-registry platforms, LandSure enforces departmental consensus at the smart contract level: a property transfer is only permitted once verified across the **Revenue**, **Survey**, **Banking**, **Judiciary (Court)**, and **Registration** authorities.
 
-### Why LandSure is unique
-- Combines Solutions 3, 4, 5, 7, 8, and 10 into **one integrated system**
-- Smart contract **enforces fraud prevention** — not just the frontend
-- Multi-step transfer with **automated eligibility checks**
-- **Cryptographic document verification** (SHA-256 hashing on-chain)
-- Immutable **ownership history** of every event
+### Key Architectural Highlights
+- **Role-Based Access Control (RBAC)**: Smart contract modifiers strictly isolate authority to authenticated departmental blockchain addresses.
+- **Automated Fraud Prevention**: Prevents illegal property transfers if active bank mortgages or court injunctions exist.
+- **Cryptographic Deed Integrity**: SHA-256 digests (`bytes32`) of legal title deeds are anchored on-chain for tamper detection.
+- **Auditable Lifecycle Tracking**: Persistent on-chain event logs and state-transition histories for complete provenance tracking.
 
 ---
 
 ## 🏗️ System Architecture
 
 ```
-CLI (Node.js + Web3.js)
-        │
-        ▼
-  LandSure.sol (Solidity)
-  ┌──────────────────────────────────────┐
-  │  Module 1: Role-Based Access Control │
-  │  Module 2: Property Registration     │
-  │  Module 3: Mortgage Management       │
-  │  Module 3b: Court Hold Management    │
-  │  Module 4: Transfer Workflow         │
-  │  Module 5: Document Hash Storage     │
-  │  Module 6: Verification (view)       │
-  └──────────────────────────────────────┘
-        │
-        ▼
-  Ganache (Local Ethereum Blockchain)
-  Accounts · Transactions · Blocks · Gas
+                       User / Operator Interfaces
+                               │
+                ┌──────────────┴──────────────┐
+                ▼                             ▼
+       Interactive CLI (Web3.js)     Automated Simulation Harness
+                │                             │
+                └──────────────┬──────────────┘
+                               │ JSON-RPC
+                               ▼
+        ┌──────────────────────────────────────────────────┐
+        │                 LandSure.sol                     │
+        │  ┌────────────────────────────────────────────┐  │
+        │  │ Module 1: Role-Based Access Control (RBAC) │  │
+        │  │ Module 2: Property & Survey Registry       │  │
+        │  │ Module 3: Mortgage & Court Injunctions     │  │
+        │  │ Module 4: Multi-Step Transfer Workflow     │  │
+        │  │ Module 5: Cryptographic Hash Verification  │  │
+        │  │ Module 6: Historical Audit Log             │  │
+        │  └────────────────────────────────────────────┘  │
+        └──────────────────────────────────────────────────┘
+                               │ EVM Execution
+                               ▼
+            Ganache Local Blockchain (Port 7545)
+            10 Provisioned Accounts · Gas & Block Mining
 ```
 
 ---
 
-## 👥 Department Accounts (Ganache)
+## 👥 Departmental Role Allocation
 
-| Account Index | Department   | Role       | Permissions                         |
+| Account Index | Entity / Department | Role Identifier | Assigned Permissions |
 |:---:|:---|:---|:---|
-| 0 | Admin          | ADMIN      | Assign all roles                    |
-| 1 | Revenue Dept   | REVENUE    | Register property                   |
-| 2 | Survey Dept    | SURVEY     | Update land details                 |
-| 3 | Registration   | REGISTRAR  | Approve & execute transfers         |
-| 4 | Bank (SBI)     | BANK       | Add / release mortgage              |
-| 5 | Court          | COURT      | Place / remove legal restrictions   |
-| 6 | Rahul (Seller) | CITIZEN    | Own property, initiate transfer     |
-| 7 | Priya (Buyer)  | CITIZEN    | Accept transfer, verify property    |
-| 8 | (Intruder)     | NONE       | For negative test demonstration     |
+| 0 | System Administrator | `ADMIN` | Role allocation and initial configuration |
+| 1 | Revenue Department | `REVENUE` | Initial property onboarding and ownership title creation |
+| 2 | Survey Department | `SURVEY` | Cadastral verification, plot boundary and area updates |
+| 3 | Land Registrar | `REGISTRAR` | Pre-transfer regulatory verification and title deed execution |
+| 4 | Commercial Bank | `BANK` | Mortgage collateral registration and NOC clearance |
+| 5 | Civil / High Court | `COURT` | Injunction stay orders and dispute hold management |
+| 6 | Property Owner (Citizen) | `CITIZEN` | Title custody, transfer request initiation |
+| 7 | Prospective Buyer | `CITIZEN` | Purchase intent verification and title inspection |
+| 8 | Unverified Entity | `NONE` | Public inspection access only |
 
 ---
 
-## 🛠️ Setup Instructions
+## 🛠️ Quick Start & Execution
 
 ### Prerequisites
-- [Node.js](https://nodejs.org) (v18+)
-- [Ganache Desktop](https://trufflesuite.com/ganache/) (v2.x)
-- VS Code
+- [Node.js](https://nodejs.org) (v18 or higher)
+- npm package manager
 
-### 1. Install dependencies
+### 1. Installation
 ```bash
+git clone <repository-url>
 cd BLOCKCHAIN_PROJECT
 npm install
 ```
 
-### 2. Start Ganache
-- Open **Ganache Desktop**
-- Click **New Workspace** → **Ethereum**
-- Verify RPC: `HTTP://127.0.0.1:7545`
-- Click **Start**
+### 2. Local Blockchain & Execution
+You can launch the entire system using the integrated runner script:
 
-### 3. Compile the smart contract
 ```bash
-npx truffle compile
+./run.sh
 ```
+This runner automatically detects the local Ganache node, validates deployment bytecode, and provides a menu:
+- **1) Automated End-to-End Simulation**: Executes the complete multi-department scenario with real on-chain transactions.
+- **2) Interactive CLI**: Menu-driven management console for manual department actions.
+- **3) Test Suite**: Executes 33 automated unit tests verifying all security reverts and state flows.
 
-### 4. Deploy to Ganache
+### Alternative: Direct npm Commands
 ```bash
-npx truffle migrate --network development
-```
-Note the contract address printed in the output.
+# Start local blockchain RPC node:
+npm run ganache
 
-### 5. Run the interactive CLI
-```bash
-node scripts/interact.js
-```
+# Deploy contracts:
+npm run migrate:reset
 
-### 6. Run the automated demo (for professor)
-```bash
-node scripts/demo.js
-```
+# Run automated workflow simulation:
+npm run demo
 
-### 7. Run the test suite
-```bash
-npx truffle test
+# Run interactive terminal console:
+npm run cli
+
+# Run test suite:
+npm test
 ```
 
 ---
 
-## 📋 Smart Contract Functions
+## 📋 Smart Contract Interface (`LandSure.sol`)
 
-### Transaction Functions (modify blockchain state, cost gas)
+### State-Changing Functions
 
-| Function | Called By | Purpose |
+| Function Signature | Access Scope | Description |
 |:---|:---|:---|
-| `assignRole(addr, role)` | Admin | Assign department role |
-| `registerProperty(...)` | Revenue | Register new property |
-| `updateLandDetails(...)` | Survey | Update survey info |
-| `addMortgage(id, ref)` | Bank | Record mortgage |
-| `releaseMortgage(id)` | Bank | Clear mortgage / NOC |
-| `placeCourtHold(id, ref)` | Court | Restrict property |
-| `removeCourtHold(id)` | Court | Remove restriction |
-| `initiateTransfer(id, buyer)` | Owner | Start transfer request |
-| `acceptTransfer(id)` | Buyer | Confirm purchase intent |
-| `approveTransfer(id)` | Registrar | Validate & approve |
-| `executeTransfer(id)` | Registrar | Change ownership |
-| `rejectTransfer(id, reason)` | Registrar | Reject transfer |
-| `updateDocumentHash(id, hash)` | Dept | Update deed hash |
+| `assignRole(address, Role)` | Admin only | Provisions departmental access to an account |
+| `registerProperty(string, string, string, string, address, bytes32)` | Revenue only | Registers initial parcel title and stores initial deed digest |
+| `updateLandDetails(string, string, string)` | Survey only | Updates verified parcel boundaries and surveyed area |
+| `addMortgage(string, string)` | Bank only | Places a financial lien / mortgage against the parcel |
+| `releaseMortgage(string)` | Bank only | Clears the mortgage and records NOC clearance on-chain |
+| `placeCourtHold(string, string)` | Court only | Enforces judicial stay order blocking all transfer operations |
+| `removeCourtHold(string)` | Court only | Rescinds court hold following judicial resolution |
+| `initiateTransfer(string, address)` | Current Owner | Begins transfer request to a designated buyer address |
+| `acceptTransfer(string)` | Designated Buyer | Buyer cryptographic confirmation of intent to acquire |
+| `approveTransfer(string)` | Registrar only | Evaluates all encumbrance conditions and designates status as approved |
+| `executeTransfer(string)` | Registrar only | Atomically updates parcel ownership pointer to buyer |
+| `rejectTransfer(string, string)` | Registrar only | Rejects pending transfer with an immutable reason |
+| `updateDocumentHash(string, bytes32)` | Authorized Depts | Records updated SHA-256 digest of amended title deeds |
 
-### View Functions (free, no gas)
+### View / Inspection Functions (Zero Gas Cost)
 
-| Function | Purpose |
+| Function Signature | Description |
 |:---|:---|
-| `getProperty(id)` | Full property details |
-| `checkTransferEligibility(id)` | Fraud-prevention report |
-| `verifyDocument(id, hash)` | Document authenticity |
-| `getPropertyHistory(id)` | Full event history |
-| `getPendingTransfer(id)` | Active transfer info |
-| `getRoleName(addr)` | Role string for address |
+| `getProperty(string)` | Returns complete parcel record including mortgage/court status |
+| `checkTransferEligibility(string)` | Comprehensive pre-transfer audit report with specific block reasons |
+| `verifyDocument(string, bytes32)` | Cryptographically compares presented document hash against on-chain record |
+| `getPropertyHistory(string)` | Returns complete timeline of all historical actions, timestamps, and actors |
+| `getPendingTransfer(string)` | Returns state of active transfer request |
+| `getRoleName(address)` | Resolves human-readable role name for any address |
 
 ---
 
-## 🔄 Property Transfer Workflow
+## 🔄 State-Machine Transfer Protocol
 
 ```
-REGISTERED
-    │
-    ▼ (owner calls initiateTransfer)
-TRANSFER_REQUESTED
-    │
-    ▼ (buyer calls acceptTransfer)
-UNDER_VERIFICATION
-    │
-    ▼ (registrar calls approveTransfer)
-    │
-    ├─── BLOCKED (mortgage / court hold) ──► REGISTERED (rejected)
-    │
-    ▼ (registrar calls executeTransfer)
-TRANSFERRED
+                     [ REGISTERED ]
+                           │
+                           ▼  initiateTransfer() (Seller)
+                 [ TRANSFER_REQUESTED ]
+                           │
+                           ▼  acceptTransfer() (Buyer)
+                 [ UNDER_VERIFICATION ]
+                           │
+             approveTransfer() (Registrar)
+             ┌─────────────┴─────────────┐
+             ▼                           ▼
+      Checks Failed:              All Checks Passed:
+   - Mortgage Active           - No Mortgages Active
+   - Court Hold Active         - No Court Injunctions
+             │                 - Buyer Accepted
+             ▼                           │
+     [ REJECTED ]                        ▼
+    (Resets status)            [ TRANSFER_APPROVED ]
+                                         │
+                                         ▼  executeTransfer() (Registrar)
+                                  [ TRANSFERRED ]
 ```
 
 ---
 
-## 🔐 Fraud Prevention Checks
+## 🔐 Automated Fraud Prevention Mechanisms
 
-Before a transfer is approved, the smart contract automatically verifies:
+Before any transfer can be approved by the Registrar, the smart contract evaluates:
 
-1. ✅ Property is registered
-2. ✅ Caller is the actual property owner
-3. ✅ Buyer has explicitly accepted
-4. ✅ **No active mortgage** (bank clearance required)
-5. ✅ **No court restriction**
-6. ✅ No other pending transfer
-
----
-
-## 🧪 Demo Scenario: Rahul → Priya
-
-| Step | Action | Result |
-|:---:|:---|:---|
-| 1 | Admin assigns all roles | ✅ Roles set |
-| 2 | Revenue registers PROP101 | ✅ Property created |
-| 3 | Survey updates land details | ✅ Verified |
-| 4 | Bank adds mortgage | ✅ Mortgage active |
-| 5 | Rahul initiates transfer to Priya | ✅ Request created |
-| 6 | Priya accepts | ✅ Buyer confirmed |
-| 7 | Registrar tries to approve | ❌ **BLOCKED: Active mortgage** |
-| 8 | Registrar rejects | ✅ Transfer reset |
-| 9 | Bank releases mortgage | ✅ NOC issued |
-| 10 | Rahul re-initiates, Priya accepts | ✅ |
-| 11 | Registrar approves (all clear) | ✅ Approved |
-| 12 | Registrar executes | 🎉 **Priya is new owner** |
-| 13 | Verify document hash | ✅ Authentic |
-| 14 | Intruder tries to register | ❌ **Reverted by contract** |
+1. **Title Verification**: The initiating seller matches `properties[propertyId].owner`.
+2. **Buyer Consent**: The acquiring party has explicitly confirmed purchase intent.
+3. **Mortgage Check**: `properties[propertyId].hasMortgage == false`. Requires bank NOC release.
+4. **Judicial Clearance**: `properties[propertyId].hasCourtHold == false`. Requires court order rescission.
+5. **Atomic Execution**: Transfer execution is restricted exclusively to the `REGISTRAR` role.
 
 ---
 
-## 📁 Project Structure
+## 📁 Repository Structure
 
 ```
 BLOCKCHAIN_PROJECT/
 ├── contracts/
-│   ├── LandSure.sol          ← Main smart contract (all 6 modules)
-│   └── Migrations.sol        ← Truffle standard
+│   ├── LandSure.sol          # Core smart contract (6 modules, RBAC, state machine)
+│   └── Migrations.sol        # Truffle deployment migration coordinator
 │
 ├── migrations/
 │   ├── 1_initial_migration.js
-│   └── 2_deploy_landsure.js  ← Deploys LandSure
+│   └── 2_deploy_landsure.js  # Automated contract deployment script
 │
 ├── test/
-│   └── LandSure.test.js      ← 30+ automated test cases
+│   └── LandSure.test.js      # 33 comprehensive unit & regression test cases
 │
 ├── scripts/
-│   ├── interact.js           ← Interactive CLI (21 menu options)
-│   └── demo.js               ← Automated professor demo
+│   ├── interact.js           # Multi-role interactive CLI console
+│   └── demo.js               # End-to-end workflow simulation harness
 │
 ├── documents/
-│   └── sample_deed_PROP101.txt
+│   └── sample_deed_PROP101.txt # Sample registered title deed for SHA-256 verification
 │
-├── truffle-config.js         ← Ganache network config
-└── package.json
+├── SYSTEM_DESIGN.md          # Technical design specification & EVM architecture analysis
+├── truffle-config.js         # Network configuration & Yul viaIR compiler settings
+├── package.json              # Project metadata, dependencies and scripts
+└── run.sh                    # Orchestration and launcher script
 ```
 
 ---
 
-## ⚠️ Important Notes for Viva
+## 📑 Technical Architecture & Design Reference
 
-1. **Ganache is a local blockchain** — accounts simulate departments, not real government nodes.
-2. **MetaMask proves key control**, not real-world legal identity. Our system associates accounts with roles.
-3. **Blockchain doesn't establish legal ownership** — it protects and tracks records after initial verified registration.
-
----
-
-## 🎓 Marks Coverage
-
-| Criteria | How LandSure covers it |
-|:---|:---|
-| Working smart contract | ✅ `LandSure.sol` fully working |
-| Constructor | ✅ Sets admin, assigns first role |
-| Transaction functions | ✅ 13 state-changing functions |
-| Ganache (not Remix) | ✅ Truffle + Ganache only |
-| Concepts & architecture | ✅ Roles, modifiers, structs, enums, events, mappings |
-| Unique approach | ✅ Multi-dept + fraud prevention + doc verification |
-
----
-
-*Made with ❤️ for the final practical examination — Blockchain Technology*
+For in-depth EVM design rationale, gas optimization analysis, and implementation details (such as the Yul `viaIR` pipeline and `bytes32` digest storage), refer to [`SYSTEM_DESIGN.md`](./SYSTEM_DESIGN.md).

@@ -116,13 +116,12 @@ contract LandSure {
     event DocumentHashRecorded(string indexed propertyId, bytes32 docHash);
 
     // ─────────────────────────────────────────────────────────────
-    // CONSTRUCTOR — required by professor; runs once at deployment
+    // CONSTRUCTOR — Initializes deployer as Administrator
     // ─────────────────────────────────────────────────────────────
 
     /**
-     * @dev Deploys the contract. The deploying account automatically
-     *      becomes the ADMIN. Only the admin can later assign roles
-     *      to other Ganache accounts.
+     * @dev Initializes the contract. The deploying account automatically
+     *      becomes the ADMIN with permission to provision departmental accounts.
      */
     constructor() {
         admin = msg.sender;

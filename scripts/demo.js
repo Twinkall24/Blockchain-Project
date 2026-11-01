@@ -1,9 +1,9 @@
 /**
  * LandSure — demo.js
  * ─────────────────────────────────────────────────────────────────────────
- * Automated end-to-end demonstration script.
- * Runs the full "Rahul sells PROP101 to Priya" scenario automatically
- * AND demonstrates the fraud-prevention negative tests.
+ * Automated end-to-end lifecycle verification and simulation script.
+ * Executes the complete multi-department transfer workflow and validates
+ * smart contract fraud-prevention mechanisms and negative security assertions.
  *
  * Usage:
  *   node scripts/demo.js
@@ -57,8 +57,8 @@ async function expectRevert(promise, label) {
 async function main() {
   console.clear();
   console.log("═".repeat(60));
-  console.log("   🏛️   LANDSURE — AUTOMATED DEMONSTRATION SCRIPT   🏛️");
-  console.log("   Blockchain-Based Land Governance System");
+  console.log("   🏛️   LANDSURE — GOVERNANCE LIFECYCLE SIMULATION   🏛️");
+  console.log("   Multi-Department Blockchain Verification & Fraud Prevention");
   console.log("   Ganache · Truffle · Solidity · Web3.js");
   console.log("═".repeat(60));
 
@@ -297,7 +297,7 @@ async function main() {
   }
 
   // ────────────────────────────────────────────────────────────────────────
-  section("DEMONSTRATION COMPLETE");
+  section("SIMULATION & VERIFICATION COMPLETE");
 
   console.log(`
   📋  SUMMARY

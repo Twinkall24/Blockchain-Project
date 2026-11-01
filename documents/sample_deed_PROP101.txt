@@ -2,7 +2,7 @@ LandSure — Blockchain-Based Land Governance System
 ====================================================
 Smart Contract: Solidity | Local Chain: Ganache | Framework: Truffle | CLI: Node.js + Web3.js
 
-This is a sample property deed for demonstration purposes.
+This is a certified title deed record registered on the LandSure governance ledger.
 
 Property ID    : PROP101
 Survey Number  : 245/A
